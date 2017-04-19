@@ -34,26 +34,30 @@ import de.hsa.inf.ml.tictactoe.Board;
 /**
  * This class represents a player that randomly chooses a free position.
  */
-public class RandomPlayer extends Player {
-    @Override
-    public int move(Board board) {
-        int size = board.getSize();
-        // Create a randomly arranged list of all moves
-        List<Integer> fields = IntStream.range(0, size * size)
-            .boxed()
-            .collect(Collectors.toList());
-        Collections.shuffle(fields);
+public class RandomPlayer extends Player
+{
+	@Override
+	public int move(Board board)
+	{
+		int size = board.getSize();
+		// Create a randomly arranged list of all moves
+		List<Integer> fields = IntStream.range(0, size * size)
+			.boxed()
+			.collect(Collectors.toList());
+		Collections.shuffle(fields);
 
-        // Only select the move if the related field is free
-        int move = -1;
-        Iterator<Integer> fieldsIterator = fields.iterator();
-        while (fieldsIterator.hasNext()) {
-            move = fieldsIterator.next();
-            if (board.value(move) == 0) {
-                break;
-            }
-            fieldsIterator.remove();
-        }
-        return move;
-    }
+		// Only select the move if the related field is free
+		int move = -1;
+		Iterator<Integer> fieldsIterator = fields.iterator();
+		while (fieldsIterator.hasNext())
+		{
+			move = fieldsIterator.next();
+			if (board.value(move) == 0)
+			{
+				break;
+			}
+			fieldsIterator.remove();
+		}
+		return move;
+	}
 }

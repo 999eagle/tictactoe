@@ -3,6 +3,8 @@ package de.hsa.inf.ml.tictactoe.player;
 import de.hsa.inf.ml.tictactoe.Board;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by erik on 2017-04-19.
@@ -18,8 +20,9 @@ public class MinimaxPlayer extends Player
 		int player = this.getId();
 		int opponent = (player == 1 ? 2 : 1);
 		int[][] state = readState(board);
-		minimax(state, player, opponent);
-		return optimalMove;
+		MinimaxThread t = new MinimaxThread(state, player, opponent, size);
+		t.run();
+		return t.optimalMove;
 	}
 
 	private int[][] readState(Board board)
@@ -33,6 +36,29 @@ public class MinimaxPlayer extends Player
 			}
 		}
 		return state;
+	}
+}
+
+class MinimaxThread extends Thread
+{
+	int[][] state;
+	int player, opponent, size;
+	public int optimalMove, score;
+	public int x, y;
+	static int numThreads = 0;
+
+	public MinimaxThread(int[][] state, int player, int opponent, int size)
+	{
+		this.state = state;
+		this.player = player;
+		this.opponent = opponent;
+		this.size = size;
+	}
+
+	@Override
+	public void run()
+	{
+		score = minimax(state, player, opponent);
 	}
 
 	private int minimax(int[][] state, int player, int opponent)
@@ -53,6 +79,7 @@ public class MinimaxPlayer extends Player
 		if (freeFields == size * size) { optimalMove = (size * size - 1) / 2; return 0; }
 		int move = -1;
 		int maxScore = -1;
+		List<MinimaxThread> threads = new ArrayList<MinimaxThread>();
 		for(int x = 0; x < size; x++)
 		{
 			for(int y = 0; y < size; y++)
@@ -60,16 +87,41 @@ public class MinimaxPlayer extends Player
 				if (state[x][y] != 0) continue;
 				freeFields++;
 				nextState[x][y] = player;
-				int score = -minimax(nextState, opponent, player);
-				if (score > maxScore)
+				MinimaxThread t = new MinimaxThread(nextState, opponent, player, size);
+				t.x = x;
+				t.y = y;
+				if (numThreads < 8)
 				{
-					maxScore = score;
-					move = y * size + x;
+					numThreads++;
+					t.start();
 				}
+				else
+				{
+					t.run();
+				}
+				threads.add(t);
 				nextState[x][y] = 0;
 			}
 		}
-		optimalMove = move;
+		for (MinimaxThread t: threads)
+		{
+			try
+			{
+				if (t.getState() != State.NEW)
+				{
+					t.join();
+					numThreads--;
+				}
+				if (t.score > maxScore)
+				{
+					maxScore = t.score;
+					optimalMove = t.y * size + t.x;
+				}
+			} catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
 		return maxScore;
 	}
 

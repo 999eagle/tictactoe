@@ -77,6 +77,7 @@ class MinimaxPlayer_Util
 		if (scoreD1P == 0 && scoreD1O > scoreLose) scoreLose = scoreD1O;
 		if (scoreD2P == 0 && scoreD2O > scoreLose) scoreLose = scoreD2O;
 		// return scores
+		if (scoreLose < size - 2) scoreLose = 0;
 		return scoreWin - scoreLose;
 	}
 

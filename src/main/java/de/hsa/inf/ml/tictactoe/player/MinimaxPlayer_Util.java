@@ -94,13 +94,23 @@ class MinimaxPlayer_Util
 		return state;
 	}
 
-	public static ArrayList<Integer> GetPossibleMoves(int[] state)
+	public static ArrayList<Integer> GetPossibleMoves(int[] state, int currentPlayer)
 	{
 		ArrayList<Integer> moves = new ArrayList<>();
+		ArrayList<Integer> scores = new ArrayList<>();
 		for (int i = 0; i < state.length; i++)
 		{
 			if (state[i] != 0) continue;
-			moves.add(i);
+			state[i] = currentPlayer;
+			int score = EstimateHeuristic(state, currentPlayer);
+			state[i] = 0;
+			int index = 0;
+			while(index < scores.size() && scores.get(index) >= score)
+			{
+				index++;
+			}
+			scores.add(index, score);
+			moves.add(index, i);
 		}
 		return moves;
 	}
@@ -116,20 +126,8 @@ class MinimaxPlayer_Util
 		int winner = GetWinner(state);
 		if (winner != 0) return winner;
 		if (depth == 0) return EstimateHeuristic(state, currentPlayer);
-		ArrayList<Integer> possibleMoves = GetPossibleMoves(state);
+		ArrayList<Integer> possibleMoves = GetPossibleMoves(state, currentPlayer);
 		if (possibleMoves.size() == 0) return 0;
-
-		possibleMoves.sort((moveA, moveB) -> {
-			state[moveA] = currentPlayer;
-			int scoreA = EstimateHeuristic(state, currentPlayer);
-			state[moveA] = 0;
-			state[moveB] = currentPlayer;
-			int scoreB = EstimateHeuristic(state, currentPlayer);
-			state[moveB] = 0;
-			if (scoreA < scoreB) return -1;
-			if (scoreA > scoreB) return 1;
-			return 0;
-		});
 
 		if (currentPlayer == 1)
 		{

@@ -10,7 +10,7 @@ public class MinimaxPlayer extends Player
 		int[] state = MinimaxPlayer_Util.ReadBoard(board, this.getId());
 		int depthLimit = 9;
 		if (board.getSize() == 4)
-			depthLimit = 10;
+			depthLimit = 11;
 		if (board.getSize() == 5)
 			depthLimit = 8;
 		return MinimaxPlayer_Util.StartAlphaBeta(state, depthLimit);

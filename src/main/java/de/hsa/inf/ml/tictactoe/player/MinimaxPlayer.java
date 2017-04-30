@@ -146,7 +146,7 @@ public class MinimaxPlayer extends Player
 			state[move] = currentPlayer;
 			winner = GetWinner(state);
 			state[move] = 0;
-			if (winner > 0)
+			if (winner != 0)
 			{
 				optimalMove = move;
 				return winner;

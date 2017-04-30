@@ -18,12 +18,12 @@ public class MinimaxPlayer extends Player
 		return StartAlphaBeta(state, depthLimit);
 	}
 
-	public int size;
-	public int optimalMove;
+	private int size;
+	private int optimalMove;
 
-	public int GetScoreLimit() { return 1000; }
+	private int GetScoreLimit() { return 1000; }
 
-	public int GetWinner(int[] boardState)
+	private int GetWinner(int[] boardState)
 	{
 		int sumRow, sumCol, sumD1 = 0, sumD2 = 0;
 		for(int i = 0; i < size; i++)
@@ -45,7 +45,7 @@ public class MinimaxPlayer extends Player
 		return 0;
 	}
 
-	public int EstimateHeuristic(int[] state, int player)
+	private int EstimateHeuristic(int[] state, int player)
 	{
 		// heuristic:
 		// 1. count minimum number of moves for player/opponent to win
@@ -92,7 +92,7 @@ public class MinimaxPlayer extends Player
 		return scoreWin - scoreLose;
 	}
 
-	public int[] ReadBoard(Board board, int ourPlayer)
+	private int[] ReadBoard(Board board, int ourPlayer)
 	{
 		size = board.getSize();
 		int[] state = new int[size * size];
@@ -106,7 +106,7 @@ public class MinimaxPlayer extends Player
 		return state;
 	}
 
-	public ArrayList<Integer> GetPossibleMoves(int[] state, int currentPlayer)
+	private ArrayList<Integer> GetPossibleMoves(int[] state, int currentPlayer)
 	{
 		ArrayList<Integer> moves = new ArrayList<>();
 		ArrayList<Integer> scores = new ArrayList<>();
@@ -127,13 +127,13 @@ public class MinimaxPlayer extends Player
 		return moves;
 	}
 
-	public int StartAlphaBeta(int[] state, int depth)
+	private int StartAlphaBeta(int[] state, int depth)
 	{
 		AlphaBeta(state, depth, -GetScoreLimit(), GetScoreLimit(), 1);
 		return optimalMove;
 	}
 
-	public int AlphaBeta(int[] state, int depth, int a, int b, int currentPlayer)
+	private int AlphaBeta(int[] state, int depth, int a, int b, int currentPlayer)
 	{
 		int winner = GetWinner(state);
 		if (winner != 0) return winner;

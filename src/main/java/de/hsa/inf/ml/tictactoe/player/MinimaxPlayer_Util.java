@@ -129,6 +129,18 @@ class MinimaxPlayer_Util
 		ArrayList<Integer> possibleMoves = GetPossibleMoves(state, currentPlayer);
 		if (possibleMoves.size() == 0) return 0;
 
+		for(int move: possibleMoves)
+		{
+			state[move] = currentPlayer;
+			winner = GetWinner(state);
+			state[move] = 0;
+			if (winner > 0)
+			{
+				optimalMove = move;
+				return winner;
+			}
+		}
+
 		if (currentPlayer == 1)
 		{
 			// maximize

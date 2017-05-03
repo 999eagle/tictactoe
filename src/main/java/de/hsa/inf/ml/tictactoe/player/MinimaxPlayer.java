@@ -10,11 +10,22 @@ public class MinimaxPlayer extends Player
 	public int move(Board board)
 	{
 		int[] state = ReadBoard(board, this.getId());
+		int freeFields = GetPossibleMoves(state, 1).size();
 		int depthLimit = 9;
 		if (board.getSize() == 4)
+		{
 			depthLimit = 11;
+			if (freeFields <= 13)
+				depthLimit++;
+		}
 		if (board.getSize() == 5)
+		{
 			depthLimit = 8;
+			if (freeFields <= 20)
+				depthLimit++;
+			if (freeFields <= 15)
+				depthLimit++;
+		}
 		return StartAlphaBeta(state, depthLimit);
 	}
 

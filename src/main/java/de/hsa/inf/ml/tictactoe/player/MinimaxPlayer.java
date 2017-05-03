@@ -46,13 +46,13 @@ public class MinimaxPlayer extends Player
 				sumRow += boardState[i * size + j];
 				sumCol += boardState[i + j * size];
 			}
-			if (sumCol == size || sumRow == size) return size;
-			if (sumCol == -size || sumRow == -size) return -size;
+			if (sumCol == size || sumRow == size) return size * 4;
+			if (sumCol == -size || sumRow == -size) return -size * 4;
 			sumD1 += boardState[i * size + i];
 			sumD2 += boardState[i * size + size - 1 - i];
 		}
-		if (sumD1 == size || sumD2 == size) return size;
-		if (sumD1 == -size || sumD2 == -size) return -size;
+		if (sumD1 == size || sumD2 == size) return size * 4;
+		if (sumD1 == -size || sumD2 == -size) return -size * 4;
 		return 0;
 	}
 
@@ -65,8 +65,8 @@ public class MinimaxPlayer extends Player
 		//   0 means both players need the same number of moves
 		//   >0 means player needs fewer moves
 		//   <0 means opponent needs fewer moves
-		byte scoreWin = 0;
-		byte scoreLose = 0;
+		byte scoreWin = 0, totalScoreWin = 0;
+		byte scoreLose = 0, totalScoreLose = 0;
 		byte scoreD1P = 0, scoreD1O = 0, scoreD2P = 0, scoreD2O = 0;
 		for (int i = 0; i < size; i++)
 		{
@@ -86,21 +86,54 @@ public class MinimaxPlayer extends Player
 			else if (state[i * size + size - 1 - i] != 0) scoreD2O++;
 
 			// current player is alone in row/col
-			if (scoreColO == 0 && scoreColP > scoreWin) scoreWin = scoreColP;
-			if (scoreRowO == 0 && scoreRowP > scoreWin) scoreWin = scoreRowP;
+			if (scoreColO == 0)
+			{
+				totalScoreWin += scoreColP;
+				if (scoreColP > scoreWin) scoreWin = scoreColP;
+			}
+			if (scoreRowO == 0)
+			{
+				totalScoreWin += scoreRowP;
+				if (scoreRowP > scoreWin) scoreWin = scoreRowP;
+			}
 			// opponent is alone in row/col
-			if (scoreColP == 0 && scoreColO > scoreLose) scoreLose = scoreColO;
-			if (scoreRowP == 0 && scoreRowO > scoreLose) scoreLose = scoreRowO;
+			if (scoreColP == 0)
+			{
+				totalScoreLose += scoreColO;
+				if (scoreColO > scoreLose) scoreLose = scoreColO;
+			}
+			if (scoreRowP == 0)
+			{
+				totalScoreLose += scoreRowO;
+				if (scoreRowO > scoreLose) scoreLose = scoreRowO;
+			}
 		}
 		// player is alone in diagonal
-		if (scoreD1O == 0 && scoreD1P > scoreWin) scoreWin = scoreD1P;
-		if (scoreD2O == 0 && scoreD2P > scoreWin) scoreWin = scoreD2P;
+		if (scoreD1O == 0)
+		{
+			totalScoreWin += scoreD1P;
+			if (scoreD1P > scoreWin) scoreWin = scoreD1P;
+		}
+		if (scoreD2O == 0)
+		{
+			totalScoreWin += scoreD2P;
+			if (scoreD2P > scoreWin) scoreWin = scoreD2P;
+		}
 		// opponent is alone in diagonal
-		if (scoreD1P == 0 && scoreD1O > scoreLose) scoreLose = scoreD1O;
-		if (scoreD2P == 0 && scoreD2O > scoreLose) scoreLose = scoreD2O;
+		if (scoreD1P == 0)
+		{
+			totalScoreLose += scoreD1O;
+			if (scoreD1O > scoreLose) scoreLose = scoreD1O;
+		}
+		if (scoreD2P == 0)
+		{
+			totalScoreLose += scoreD2O;
+			if (scoreD2O > scoreLose) scoreLose = scoreD2O;
+		}
 		// return scores
-		if (scoreLose < size - 2) scoreLose = 0;
-		return scoreWin - scoreLose;
+		if (scoreLose == size) return -scoreLose * 4;
+		if (scoreWin == size) return scoreWin * 4;
+		return totalScoreWin - totalScoreLose;
 	}
 
 	private int[] ReadBoard(Board board, int ourPlayer)
@@ -148,7 +181,7 @@ public class MinimaxPlayer extends Player
 	{
 		int winner = GetWinner(state);
 		if (winner != 0) return winner;
-		if (depth == 0) return EstimateHeuristic(state, currentPlayer);
+		if (depth == 0) return EstimateHeuristic(state, 1);
 		ArrayList<Integer> possibleMoves = GetPossibleMoves(state, currentPlayer);
 		if (possibleMoves.size() == 0) return 0;
 

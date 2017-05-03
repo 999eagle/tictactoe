@@ -68,6 +68,7 @@ public class MinimaxPlayer extends Player
 		byte scoreWin = 0, totalScoreWin = 0;
 		byte scoreLose = 0, totalScoreLose = 0;
 		byte scoreD1P = 0, scoreD1O = 0, scoreD2P = 0, scoreD2O = 0;
+		byte minScore = (byte)(size - 3);
 		for (int i = 0; i < size; i++)
 		{
 			byte scoreRowP = 0, scoreRowO = 0, scoreColP = 0, scoreColO = 0;
@@ -86,46 +87,46 @@ public class MinimaxPlayer extends Player
 			else if (state[i * size + size - 1 - i] != 0) scoreD2O++;
 
 			// current player is alone in row/col
-			if (scoreColO == 0)
+			if (scoreColO == 0 && scoreColP >= minScore)
 			{
 				totalScoreWin += scoreColP;
 				if (scoreColP > scoreWin) scoreWin = scoreColP;
 			}
-			if (scoreRowO == 0)
+			if (scoreRowO == 0 && scoreRowP >= minScore)
 			{
 				totalScoreWin += scoreRowP;
 				if (scoreRowP > scoreWin) scoreWin = scoreRowP;
 			}
 			// opponent is alone in row/col
-			if (scoreColP == 0)
+			if (scoreColP == 0 && scoreColO >= minScore)
 			{
 				totalScoreLose += scoreColO;
 				if (scoreColO > scoreLose) scoreLose = scoreColO;
 			}
-			if (scoreRowP == 0)
+			if (scoreRowP == 0 && scoreRowO >= minScore)
 			{
 				totalScoreLose += scoreRowO;
 				if (scoreRowO > scoreLose) scoreLose = scoreRowO;
 			}
 		}
 		// player is alone in diagonal
-		if (scoreD1O == 0)
+		if (scoreD1O == 0 && scoreD1P >= minScore)
 		{
 			totalScoreWin += scoreD1P;
 			if (scoreD1P > scoreWin) scoreWin = scoreD1P;
 		}
-		if (scoreD2O == 0)
+		if (scoreD2O == 0 && scoreD2P >= minScore)
 		{
 			totalScoreWin += scoreD2P;
 			if (scoreD2P > scoreWin) scoreWin = scoreD2P;
 		}
 		// opponent is alone in diagonal
-		if (scoreD1P == 0)
+		if (scoreD1P == 0 && scoreD1O >= minScore)
 		{
 			totalScoreLose += scoreD1O;
 			if (scoreD1O > scoreLose) scoreLose = scoreD1O;
 		}
-		if (scoreD2P == 0)
+		if (scoreD2P == 0 && scoreD2O >= minScore)
 		{
 			totalScoreLose += scoreD2O;
 			if (scoreD2O > scoreLose) scoreLose = scoreD2O;

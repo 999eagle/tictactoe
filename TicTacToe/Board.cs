@@ -60,6 +60,7 @@ namespace TicTacToe
 		public int[] CalculateFeatures()
 		{
 			var features = new List<int>();
+			features.Add(1);
 			for (int x = 0; x < Size; x++)
 			{
 				features.Add(Enumerable.Range(0, Size).Count(y => state[x + y * Size] == 1));

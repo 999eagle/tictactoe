@@ -8,7 +8,7 @@ namespace TicTacToe.Player
 {
 	class RandomPlayer : BasePlayer
 	{
-		Random rand = new Random();
+		static Random rand = new Random();
 
 		public override int Move(Board board)
 		{

@@ -10,6 +10,12 @@ namespace TicTacToe
 {
 	class Program
 	{
+		static double learnRate = 0.0000000001;
+		static double winScore = 1;
+		static double drawScore = 0;
+		static double lossScore = -1;
+		static double maxErrorDelta = 0.001;
+		static int gameCount = 10000;
 		static void Main(string[] args)
 		{
 			var tournament = new Tournament();
@@ -18,19 +24,18 @@ namespace TicTacToe
 			int size = 5;
 
 			Console.WriteLine("Generating training data...");
-			var trainData = new List<(int[] features, int score)>();
-			for (int i = 0; i < 1000; i++)
+			var trainData = new List<(int[] features, double score)>();
+			for (int i = 0; i < gameCount; i++)
 			{
 				var features = new List<int[]>();
 				var game = tournament.CreateGame(p1Name, p2Name, size);
 				var winner = game.Play(false, false, features);
-				int score = winner == null ? 0 : winner == game.Player1 ? 100 : -100;
+				double score = winner == null ? drawScore : winner == game.Player1 ? winScore : lossScore;
 				trainData.AddRange(features.Select(f => (f, score)));
 			}
 			Console.WriteLine($"Training with {trainData.Count} records...");
 			int rounds = 0;
 			double[] weights = new double[trainData[0].features.Length];
-			double learnRate = 0.0000000001;
 			double lastError, error = 0;
 			do
 			{
@@ -46,8 +51,17 @@ namespace TicTacToe
 				{
 					Console.WriteLine($"{rounds} rounds of training finished. Current error: {error} Change: {error - lastError}");
 				}
-			} while (Math.Abs(lastError - error) > 1);
-			Console.WriteLine($"weights: {String.Join(", ", weights)}");
+			} while (Math.Abs(lastError - error) > maxErrorDelta);
+			Console.WriteLine($"total rounds: {rounds} error: {error} change: {error - lastError}\nweights: {String.Join(", ", weights)}");
+			using (var file = File.Open("learn_results.txt", FileMode.Append, FileAccess.Write))
+			using (var w = new StreamWriter(file))
+			{
+				w.WriteLine("Parameters:");
+				w.WriteLine($"  games: {gameCount}, total records: {trainData.Count}\n  scoring (win/draw/loss): {winScore}/{drawScore}/{lossScore}\n  learn rate: {learnRate}\n  max error change: {maxErrorDelta}\n\nTraining:\n  rounds: {rounds}\n  error: {error}, change: {error - lastError}\n");
+				w.WriteLine("Weights:");
+				foreach (var weight in weights) { w.WriteLine(weight); }
+				w.WriteLine("---------------------------------");
+			}
 			Console.ReadLine();
 		}
 	}

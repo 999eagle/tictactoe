@@ -61,17 +61,30 @@ namespace TicTacToe
 		{
 			var features = new List<int>();
 			features.Add(1);
+			int r1, r2;
 			for (int x = 0; x < Size; x++)
 			{
-				features.Add(Enumerable.Range(0, Size).Count(y => state[x + y * Size] == 1));
-				features.Add(Enumerable.Range(0, Size).Count(y => state[x + y * Size] == 2));
-				features.Add(Enumerable.Range(0, Size).Count(y => state[x * Size + y] == 1));
-				features.Add(Enumerable.Range(0, Size).Count(y => state[x * Size + y] == 2));
+				r1 = Enumerable.Range(0, Size).Count(y => state[x + y * Size] == 1);
+				r2 = Enumerable.Range(0, Size).Count(y => state[x + y * Size] == 2);
+				features.Add(r1);
+				features.Add(r2);
+				features.Add(r1 == 0 ? r2 : r2 == 0 ? r1 : 0);
+				r1 = Enumerable.Range(0, Size).Count(y => state[x * Size + y] == 1);
+				r2 = Enumerable.Range(0, Size).Count(y => state[x * Size + y] == 2);
+				features.Add(r1);
+				features.Add(r2);
+				features.Add(r1 == 0 ? r2 : r2 == 0 ? r1 : 0);
 			}
-			features.Add(Enumerable.Range(0, Size).Count(i => state[i + i * Size] == 1));
-			features.Add(Enumerable.Range(0, Size).Count(i => state[i + i * Size] == 2));
-			features.Add(Enumerable.Range(0, Size).Count(i => state[Size - 1 - i + i * Size] == 1));
-			features.Add(Enumerable.Range(0, Size).Count(i => state[Size - 1 - i + i * Size] == 2));
+			r1 = Enumerable.Range(0, Size).Count(i => state[i + i * Size] == 1);
+			r2 = Enumerable.Range(0, Size).Count(i => state[i + i * Size] == 2);
+			features.Add(r1);
+			features.Add(r2);
+			features.Add(r1 == 0 ? r2 : r2 == 0 ? r1 : 0);
+			r1 = Enumerable.Range(0, Size).Count(i => state[Size - 1 - i + i * Size] == 1);
+			r2 = Enumerable.Range(0, Size).Count(i => state[Size - 1 - i + i * Size] == 2);
+			features.Add(r1);
+			features.Add(r2);
+			features.Add(r1 == 0 ? r2 : r2 == 0 ? r1 : 0);
 			features.Add(state.Count(f => f == 0));
 			features.Add(state.Count(f => f == 1));
 			features.Add(state.Count(f => f == 2));

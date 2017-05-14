@@ -2,6 +2,11 @@ package de.hsa.inf.ml.tictactoe.player;
 
 import de.hsa.inf.ml.tictactoe.Board;
 
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +17,23 @@ public class LearningPlayer extends Player
 {
 	private int size;
 	private double[] weights = new double[0];
+	
+	public LearningPlayer()
+	{
+		ArrayList<Double> weightList = new ArrayList<>();
+		try
+		{
+			Files.lines(FileSystems.getDefault().getPath("weights")).forEach(
+				l -> {
+					weightList.add(Double.parseDouble(l));
+				});
+			weights = weightList.stream().mapToDouble(d -> d).toArray();
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
 	
 	@Override
 	public int move(Board board)

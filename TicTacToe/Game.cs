@@ -13,27 +13,28 @@ namespace TicTacToe
 		public BasePlayer Player1 { get; set; }
 		public BasePlayer Player2 { get; set; }
 
-		public BasePlayer Play(bool printMove, bool printBoard)
+		public BasePlayer Play(bool printMove, bool printBoard, List<int[]> features = null)
 		{
 			BasePlayer winningPlayer;
 			while (true)
 			{
-				winningPlayer = PlayerTurn(Player1, Player2, printMove, printBoard);
+				winningPlayer = PlayerTurn(Player1, Player2, printMove, printBoard, features);
 				if (winningPlayer != null) return winningPlayer;
 				if (Board.IsDrawState()) return null;
 
-				winningPlayer = PlayerTurn(Player2, Player1, printMove, printBoard);
+				winningPlayer = PlayerTurn(Player2, Player1, printMove, printBoard, features);
 				if (winningPlayer != null) return winningPlayer;
 				if (Board.IsDrawState()) return null;
 			}
 		}
 
-		BasePlayer PlayerTurn(BasePlayer player, BasePlayer opponent, bool printMove, bool printBoard)
+		BasePlayer PlayerTurn(BasePlayer player, BasePlayer opponent, bool printMove, bool printBoard, List<int[]> features)
 		{
 			int move = player.Move(Board);
 			if (printMove) Console.WriteLine($"Move of {player}: {move}");
 			if (!Board.IsValidMove(move)) return opponent;
 			Board[move] = player.Id;
+			features?.Add(Board.CalculateFeatures());
 			if (printBoard) Console.WriteLine(Board);
 			if (Board.IsWinningState(Board.Score(player))) return player;
 			return null;

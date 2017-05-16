@@ -45,6 +45,7 @@
     <Compile Include="Board.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Player\BasePlayer.cs" />
+    <Compile Include="Player\LearningPlayer.cs" />
     <Compile Include="Player\RandomPlayer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

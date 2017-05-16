@@ -48,7 +48,10 @@ namespace TicTacToe
 				{
 					double learnError = train.score - LearningPlayer.CalculateScore(train.features, weights);
 					error += learnError * learnError;
-					weights = weights.Zip(train.features, (w, f) => w + learnRate * f * learnError).ToArray();
+					for (int i = 0; i < weights.Length; i++)
+					{
+						weights[i] = weights[i] + learnRate * learnError * train.features[i];
+					}
 				}
 				if (++rounds % 500 == 0)
 				{

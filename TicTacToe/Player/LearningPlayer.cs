@@ -15,7 +15,12 @@ namespace TicTacToe.Player
 
 		public static double CalculateScore(int[] features, double[] weights)
 		{
-			return weights.Zip(features, (w, f) => w * f).Aggregate((a, b) => a + b);
+			double score = 0;
+			for (int i = 0; i < weights.Length; i++)
+			{
+				score += features[i] * weights[i];
+			}
+			return score;
 		}
 	}
 }

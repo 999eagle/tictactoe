@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -37,6 +38,8 @@ namespace TicTacToe
 			int rounds = 0;
 			double[] weights = new double[trainData[0].features.Length];
 			double lastError, error = 0;
+			var watch = new Stopwatch();
+			watch.Start();
 			do
 			{
 				lastError = error;
@@ -52,17 +55,23 @@ namespace TicTacToe
 					Console.WriteLine($"{rounds} rounds of training finished. Current error: {error} Change: {error - lastError}");
 				}
 			} while (Math.Abs(lastError - error) > maxErrorDelta);
-			Console.WriteLine($"total rounds: {rounds} error: {error} change: {error - lastError}\nweights: {String.Join(", ", weights)}");
+			watch.Stop();
+			Console.WriteLine($"total rounds: {rounds} error: {error} change: {error - lastError}\nweights: {String.Join(", ", weights)}\ntime: {GetReadableString(watch.Elapsed)}");
 			using (var file = File.Open("learn_results.txt", FileMode.Append, FileAccess.Write))
 			using (var w = new StreamWriter(file))
 			{
 				w.WriteLine("Parameters:");
-				w.WriteLine($"  games: {gameCount}, total records: {trainData.Count}\n  scoring (win/draw/loss): {winScore}/{drawScore}/{lossScore}\n  learn rate: {learnRate}\n  max error change: {maxErrorDelta}\n\nTraining:\n  rounds: {rounds}\n  error: {error}, change: {error - lastError}\n");
+				w.WriteLine($"  games: {gameCount}, total records: {trainData.Count}\n  scoring (win/draw/loss): {winScore}/{drawScore}/{lossScore}\n  learn rate: {learnRate}\n  max error change: {maxErrorDelta}\n\nTraining:\n  rounds: {rounds}\n  time: {GetReadableString(watch.Elapsed)}\n  error: {error}, change: {error - lastError}\n");
 				w.WriteLine("Weights:");
 				foreach (var weight in weights) { w.WriteLine(weight); }
 				w.WriteLine("---------------------------------");
 			}
 			Console.ReadLine();
+		}
+
+		static string GetReadableString(TimeSpan ts)
+		{
+			return $"{(ts.Hours > 0 ? ts.Hours + "h" : "")} {(ts.Minutes > 0 ? ts.Minutes + "min" : "")} {ts.Seconds + ts.Milliseconds / 1000.0f}s";
 		}
 	}
 }
